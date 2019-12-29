@@ -1,0 +1,4 @@
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/src/cmake-build-debug/CMakeFiles/experiment.dir
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/src/cmake-build-debug/CMakeFiles/test.dir
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/src/cmake-build-debug/CMakeFiles/edit_cache.dir

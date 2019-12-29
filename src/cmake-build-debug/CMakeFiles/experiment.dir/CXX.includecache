@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../../include/GameBoard.h
+vector
+-
+
+../../include/View.h
+GameBoard.h
+../../include/GameBoard.h
+string
+-
+
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/experiment/main.cpp
+View.h
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/experiment/View.h
+GameBoard.h
+C:/Users/theba/Desktop/Software Projects/School/2AA4/buszowid/A4/experiment/GameBoard.h
+iostream
+-
+

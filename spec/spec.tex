@@ -1,0 +1,292 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{url}
+
+\oddsidemargin -10mm
+\evensidemargin -10mm
+\textwidth 160mm
+\textheight 200mm
+\renewcommand\baselinestretch{1.0}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+
+\newcounter{stepnum}
+
+%% Comments
+
+\usepackage{color}
+
+\title{Assignment 4, Specification}
+\author{Dominik Buszowiecki}
+
+\begin {document}
+
+\maketitle
+
+\newpage
+
+  %%%%%%%%%%%%%%%%  Board Module %%%%%%%%%%%%%%%%
+\section* {Game Board ADT Module}
+
+\subsection*{Template Module}
+
+BoardT
+
+\subsection* {Uses}
+
+\noindent None
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+new BoardT  & Grid & BoardT & invalid\_argument\\
+\hline
+nextStage & & BoardT & \\
+\hline
+  toGrid & & Grid & \\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$S$ : Grid \textit{\# 2D array}
+
+\subsubsection* {State Invariant}
+
+$\forall e \in S (|S[0]| = |e|)$ \textit{\# All elements in S are sequences of the same size}
+
+\subsubsection* {Assumptions \& Design Decisions}
+
+\begin{itemize}
+
+\item The BoardT constructor is called before any other access
+  routine is called on that instance. Once a BoardT has been created, the
+  constructor will not be called on it again.
+
+\end{itemize}
+
+\newpage
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection* {Access Routine Semantics}
+
+\noindent BoardT($\mathit{G}$):
+\begin{itemize}
+\item transition: $S := G$
+\item output: $out := self$
+\item exception: $exc := (|G| = 0 \lor \lnot(\forall e \in G : |G[0]| = |e|) \Rightarrow \text{invalid\_argument})$
+  \\ \textit{\# Exception checks state invariant}
+\end{itemize}
+
+\noindent nextStage():
+\begin{itemize}
+\item transition:
+$S:= G$ such that $(\forall i, j: \mathbb{N} | \text{IsInBounds}(S, i, j) : G[i][j] = \text{updateCell}(S, i, j))$
+\item output: $out := self$
+\item exception: none
+\end{itemize}
+
+\noindent toGrid():
+\begin{itemize}
+\item output: $out := S$
+\item exception: none
+\end{itemize}
+
+\subsection*{Local Types}
+
+Grid = seq of (seq of $\mathbb{B}$)
+
+\newpage
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{Local Functions}
+
+\noindent $\text{UpdateCell} : \text{Grid} \times \mathbb{N} \times \mathbb{N} \rightarrow \ \mathbb{B} $\\
+\noindent
+$\text{UpdateCell}(S,x,y) \equiv$
+
+\begin{tabular}{|p{3cm}|p{4cm}|2|}
+\hhline{|-|-|-|}
+$S[x][y] = \text{True}$  & $\text{NumAdj}(S,x,y) < 2$ & False\\
+\hhline{|~|-|-|}
+ & $\text{NumAdj}(S,x,y) = 2$ & True\\
+\hhline{|~|-|-|}
+ & $\text{NumAdj}(S,x,y) = 3$ & True\\
+\hhline{|~|-|-|}
+ & $\text{NumAdj}(S,x,y) > 3$ & False\\
+\hhline{|-|-|-|}
+$S[x][y] = \text{False}$ & & $\text{NumAdj}(S,x,y) = 3$\\
+\hhline{|-|-|-|}
+\end{tabular}\\\\
+
+\noindent $\text{NumAdj} : \text{Grid} \times \mathbb{N} \times \mathbb{N} \rightarrow \ \mathbb{N} $\\
+\noindent
+$\text{NumAdj}(S,x,y) \equiv$ \\
+$ +(i,j: \mathbb{N} | i \in \{x+1, x-1\} \land j \in \{y+1, y-1\} \land \text{IsInBounds}(S,i,j) \land S[i][j] = \text{True} : 1)$ \\
+\textit{\# Assumed that when x or y is 0, x-1 or y-1 does not return anything, i or j can only become \{x+1\} or \{y+1\}}\\
+
+\noindent $\text{IsInBounds} : \text{Grid} \times \mathbb{N} \times \mathbb{N} \rightarrow \ \mathbb{B} $\\
+\noindent
+$\text{IsInBounds}(S,x,y) \equiv x < |S| \land y < |S[0]|$
+
+\newpage
+
+  %%%%%%%%%%%%%%%%  View Module %%%%%%%%%%%%%%%%
+\section* {View Module}
+
+\subsection*{Module}
+
+View
+
+\subsection* {Uses}
+
+\noindent GameBoardT
+
+\subsection* {Syntax}
+
+\subsubsection* {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+readStage  & $s:$ string & & file\_not\_found\\
+\hline
+initStage  & $\mathbb{N}, \mathbb{N}$ & & out\_of\_range\\
+\hline
+simulate & $\mathbb{N}$ & & \\
+\hline
+writeStage & $s:$ string & & \\
+\hline
+\end{tabular}
+
+\subsection* {Semantics}
+
+\subsubsection* {State Variables}
+
+$gameBoard$ : GameBoardT \textit{\# 2D array}
+
+\subsection* {Environment Variables}
+
+gridFile: File containing a grid representation of the game
+
+\subsubsection* {State Invariant}
+
+None
+
+\subsubsection* {Assumptions \& Design Decisions}
+
+\begin{itemize}
+    \item The input file will match the given specification, each line will have equal number of characters
+    \item The user will either call readStage or initStage before simulating or witting the board
+\end{itemize}
+
+\newpage
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection* {Access Routine Semantics}
+
+\noindent readStage($s$):
+\begin{itemize}
+\item transition: $gameBoard := \text{GameBoard}(G)$ where G is a seq of(seq of $\mathbb{B}$)
+
+    G is generated from the file gridFile associated with the string s.
+    It is generated with the following condition:
+    \begin{equation*}
+        (\forall i: \mathbb{N} | i < |L| : G[i] = \text{stringToRow}(L))
+    \end{equation*}
+    Where $L$ is a seq of string, each string in L corresponds to a line in file s.
+    Therefore, $L[2][4]$ would represent the 5th character in the 3rd row.
+    An example of file s is provided below:
+    \begin{center}
+        \_\_\_\_\_\_\_0\_\_\_\_\_\_\_0\_\_ \\
+        \_\_\_0\_\_\_\_\_\_\_\_\_0\_\_\_\_ \\
+        \_\_\_\_\_0\_\_\_0\_\_\_\_\_\_\_\_ \\
+    \end{center}
+    Each "0" corresponds to a populated cell, where a "\_" is an empty cell
+    (note: an empty cell can be represented by anything but 0 when the file is read)
+\end{itemize}
+
+\noindent initStage(x, y):
+\begin{itemize}
+\item transition: $gameBoard := G$ such that \\
+    $(|G.\text{toGrid}()| = x \land |G.\text{toGrid}()[0]| = y \land (\forall i, j : \mathbb{N}| i < x \land j < y : G.\text{toGrid}()[i][j] = False)$
+\item exception: $exc := (x \le 0 \lor y \le 0 \Rightarrow \text{invalid\_argument})$
+\end{itemize}
+
+\noindent simulate(n):
+\begin{itemize}
+\item transition: \textit{\# Procedural Specification} \\
+printStage() \\
+for all $i$ in $[0..n] : $\\
+\hspace{1}$gameBoard = gameBoard.\text{nextStage}()$ \\
+\hspace{1}printStage()
+\item exception: $exc := (x \le 0 \lor y \le 0 \Rightarrow \text{invalid\_argument})$
+\end{itemize}
+
+\noindent writeStage($s$):
+\begin{itemize}
+\item transition:
+    Writes G into the file with name s.
+    G can be represented be the following.
+    \begin{equation*}
+        (\forall i, j: \mathbb{N} | i < |L| \land j < |L[0]| : L[i][j] = "\_" \Rightarrow G[i][j] = \text{False} | L[i][j] = "0" \Rightarrow G[i][j] = \text{True})
+    \end{equation*}
+    Where $L$ is a seq of string, each string in L corresponds to a line in file s.
+\end{itemize}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{Local Functions}
+
+\noindent $\text{stringToRow} : \text{string} \rightarrow \ \text{seq of }\mathbb{B} $\\
+\noindent
+$\text{stringToRow}(s) \equiv L \text{ such that } (\forall i : \mathbb{N} | i < |s| : L[i] = (S[i] = "0"))$ \\
+
+\noindent $\text{printStage} :$\\
+\noindent
+$\text{printStage}() \equiv$ \\
+Displays $s$ in terminal where $s$ is: \\
+s = $(+i: \mathbb{N} | i < |gameBoard.\text{toGrid}()| : \text{rowToString}(gameBoard.\text{toGrid()}[i]) + "\symbol{92} n")$ \\
+
+\noindent $\text{rowToString} : \text{seq of }\mathbb{B} \rightarrow \text{string}$\\
+\noindent
+$\text{stringToRow}(s) \equiv L \text{ such that } (\forall i : \mathbb{N} | i < |s| : s[i] \Rightarrow L[i] = "[\#]" \land \lnot s[i] \Rightarrow L[i] = "[\ ]")$ \\
+
+\newpage
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Critique of Design}
+
+\wss{Write a critique of the interface for the modules in this project.  Is there
+anything missing?  Is there anything you would consider changing?  Why?}\\
+
+\noindent Potential discussion points:
+
+\begin{itemize}
+\item The stack module provides a toSeq module that violates essentiality.  To
+  address this, another module could be built to provide the toSeq service
+  through a function that takes a stack as input and return a sequence.
+\end{itemize}
+
+\end {document}
